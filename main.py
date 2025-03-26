@@ -2,11 +2,11 @@ import re
 import time
 from pyrogram import Client, filters
 
-API_ID = "26592308"
-API_HASH = "a2e265097c7b2cc34e2d893707e2e56f" 
+API_ID = "26592308"  # Replace with your API ID
+API_HASH = "a2e265097c7b2cc34e2d893707e2e56f"  # Replace with your API Hash
 
 # Initialize the user client
-app = Client("telegram_user", api_id=API_ID, api_hash=API_HASH)
+app = Client("telegram_user.session", api_id=API_ID, api_hash=API_HASH)
 
 USERNAME_PATTERN = r"Phone Number:\s*telegram\s*-\s*([\w\d_]+)"
 
@@ -27,8 +27,17 @@ def check_message(client, message):
             print(f"🔍 Found Telegram username: @{username}")
 
             try:
-                client.send_message(username, "Hey there! 👋")
-                print(f"✅ Message sent to @{username}")
+                # Send the three messages with a delay
+                messages = [
+                    "Hey there! How are you?",
+                    "I am Enkli from LanderLab, your Dedicated Account Manager.",
+                    "Please do not hesitate to contact me here if you have any question or need help."
+                ]
+                for msg in messages:
+                    client.send_message(username, msg)
+                    print(f"✅ Message sent to @{username}: {msg}")
+                    time.sleep(5)  # Wait for 5 seconds before sending the next message
+
             except Exception as e:
                 log_error(f"Could not send message to @{username}: {e}")
 
@@ -43,7 +52,7 @@ def run_bot():
         log_error(f"User Bot failed to start: {e}")
         if "SESSION_REVOKED" in str(e):
             print("❌ Session revoked. Deleting session and trying again.")
-            app.delete_session()
+            app.storage.delete()  # Proper session cleanup
             run_bot()
 
 # Start bot
